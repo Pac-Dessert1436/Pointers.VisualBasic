@@ -28,7 +28,7 @@ public unsafe class MemoryBlock : IDisposable
     /// </summary>
     /// <typeparam name="T">The type of elements to allocate memory for.</typeparam>
     /// <param name="elementCount">The number of elements.</param>
-    /// <returns>A new MemoryBlock instance.</returns>
+    /// <returns>A new <see cref="MemoryBlock"/> instance.</returns>
     public static MemoryBlock Allocate<T>(int elementCount) where T : unmanaged
     {
         return new MemoryBlock(elementCount * sizeof(T));
@@ -54,7 +54,7 @@ public unsafe class MemoryBlock : IDisposable
     /// </summary>
     /// <typeparam name="T">The type of pointer to create.</typeparam>
     /// <param name="elementCount">The number of elements.</param>
-    /// <returns>A new Pointer<T> instance.</returns>
+    /// <returns>A new <see cref="Pointer{T}"/> instance.</returns>
     public Pointer<T> AsPointer<T>(int elementCount) where T : unmanaged
     {
         ObjectDisposedException.ThrowIf(_isDisposed, nameof(MemoryBlock));

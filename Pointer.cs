@@ -1,6 +1,28 @@
 ﻿namespace Pointers.VisualBasic;
 
 /// <summary>
+/// Factory module for creating pointers from arrays, with the <see cref="Pointer.UBound(Pointer{T})"/> function to 
+/// get the upper bound of the pointer (number of elements - 1).
+/// </summary>
+public static class Pointer
+{
+    /// <summary>
+    /// Creates a pointer from an existing array, which internally pins the array to prevent 
+    /// GC movement. This is an alternative to the constructor for more fluent API usage.
+    /// </summary>
+    /// <param name="array">The array to create a pointer from. Must not be null.</param>
+    /// <returns>A new <see cref="Pointer{T}"/> instance pointing to the pinned array.</returns>
+    public static Pointer<T> Create<T>(T[] array) where T : unmanaged => new(array);
+
+    /// <summary>
+    /// Gets the upper bound of the pointer (number of elements - 1).
+    /// </summary>
+    /// <param name="ptr">The pointer to get the upper bound for.</param>
+    /// <returns>The upper bound of the pointer.</returns>
+    public static int UBound<T>(Pointer<T> ptr) where T : unmanaged => ptr.Length - 1;
+}
+
+/// <summary>
 /// Pointer class to manage unmanaged memory pointers, providing safe access to unmanaged memory.
 /// </summary>
 /// <typeparam name="T">The unmanaged type of elements in the pointer.</typeparam>
@@ -34,14 +56,6 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
         ArgumentOutOfRangeException.ThrowIfNegative(length);
         _length = length;
     }
-
-    /// <summary>
-    /// Creates a pointer from an existing array, which internally pins the array to prevent 
-    /// GC movement. This is an alternative to the constructor for more fluent API usage.
-    /// </summary>
-    /// <param name="array">The array to create a pointer from. Must not be null.</param>
-    /// <returns>A new Pointer(Of T) instance pointing to the pinned array.</returns>
-    public static Pointer<T> Create(T[] array) => new(array);
 
     /// <summary>
     /// Gets the number of elements in the pointer.
