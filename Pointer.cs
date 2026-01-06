@@ -1,24 +1,24 @@
-﻿namespace Pointers.VisualBasic;
+namespace Pointers.VisualBasic;
 
 /// <summary>
-/// Factory module for creating pointers from arrays, with the <see cref="Pointer.UBound(Pointer{T})"/> function to 
-/// get the upper bound of the pointer (number of elements - 1).
+/// A factory class for creating typed pointers from arrays, with utilities for pointer
+/// operations like retrieving the upper bound index.
 /// </summary>
 public static class Pointer
 {
     /// <summary>
-    /// Creates a pointer from an existing array, which internally pins the array to prevent 
-    /// GC movement. This is an alternative to the constructor for more fluent API usage.
+    /// Creates a typed pointer from an existing array by internally pinning it to prevent
+    /// garbage collector movement. Provides a fluent alternative to the constructor.
     /// </summary>
     /// <param name="array">The array to create a pointer from. Must not be null.</param>
     /// <returns>A new <see cref="Pointer{T}"/> instance pointing to the pinned array.</returns>
     public static Pointer<T> Create<T>(T[] array) where T : unmanaged => new(array);
 
     /// <summary>
-    /// Gets the upper bound of the pointer (number of elements - 1).
+    /// Gets the upper bound index of the pointer, which is one less than the total number of elements.
     /// </summary>
     /// <param name="ptr">The pointer to get the upper bound for.</param>
-    /// <returns>The upper bound of the pointer.</returns>
+    /// <returns>The upper bound index of the pointer.</returns>
     public static int UBound<T>(Pointer<T> ptr) where T : unmanaged => ptr.Length - 1;
 }
 

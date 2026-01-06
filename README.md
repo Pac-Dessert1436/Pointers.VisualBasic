@@ -18,6 +18,10 @@ This class library provides **memory-safe pointer operations** for VB.NET, desig
 - Convenient conversion to strongly-typed `Pointer(Of T)` instances
 - Built-in finalizer protection for automatic cleanup of unmanaged memory that isn't manually released
 
+### `Pointer` Factory Class
+- Fluent API for creating typed pointers from arrays
+- Utility functions for pointer operations like retrieving the upper bound index
+
 ## Installation & Build
 ### 1. Obtain Source Code
 Clone the repository and navigate to the project directory:
@@ -124,7 +128,7 @@ Module Program
         ' Create source and destination pointers
         Using sourcePtr = Pointer.Create(sourceArray)
             Using destPtr = Pointer.Create(destArray)
-                ' Copy all elements (sourcePtr → destPtr)
+                ' Copy all elements (sourcePtr -> destPtr)
                 sourcePtr.CopyTo(destPtr)
                 
                 ' Copy only the first 3 elements
@@ -139,6 +143,12 @@ End Module
 ```
 
 ## API Reference
+### `Pointer` Factory Class
+| Function Signature | Description |
+|------------------|-------------|
+| `Shared Create(array As T())` | Creates a `Pointer(Of T)` instance from an array, internally pinning it to prevent garbage collector movement. Provides a more fluent alternative to the constructor |
+| `Shared UBound(Of T)(ptr As Pointer(Of T))` | Gets the upper bound index of the pointer, which is one less than the total number of elements (equivalent to `ptr.Length - 1`) |
+
 ### Core Members of `Pointer(Of T)`
 #### Properties
 | Property Name | Description |
@@ -152,7 +162,6 @@ End Module
 #### Methods
 | Method Signature | Description |
 |------------------|-------------|
-| `Shared Create(array As T())` | Creates a `Pointer(Of T)` instance from an array |
 | `Offset(offset As Integer)` | Creates a new pointer offset by the specified number of elements |
 | `CopyTo(destination As Pointer(Of T), Optional count As Integer = 0)` | Copies elements to the target pointer (count=0 means all elements) |
 | `CopyTo(destination As T(), Optional count As Integer = 0)` | Copies elements to the target array |
@@ -186,7 +195,7 @@ The library is designed to avoid common risks of raw pointers, with core safety 
 4. **Automatic Memory Management**: Dual protection via `IDisposable` and finalizers to prevent memory leaks
 5. **Type Safety**: Generic parameters strictly enforce type constraints to avoid type-unsafe memory access
 
-## Notes
+## Important Notes
 1. Always wrap pointer/memory block instances in `Using` statements to ensure timely resource release (especially for unmanaged memory)
 2. When `Pointer(Of T)` is created from an existing array, the array is automatically pinned to prevent memory invalidation caused by GC movement
 3. `MemoryBlock` allocates unmanaged memory and must be manually disposed (or rely on `Using` for automatic disposal) to avoid memory leaks
