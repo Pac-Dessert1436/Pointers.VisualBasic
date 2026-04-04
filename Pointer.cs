@@ -1,14 +1,19 @@
-namespace Pointers.VisualBasic;
+namespace PointersAndWorkaroundsVB;
 
 /// <summary>
-/// A factory class for creating typed pointers from arrays, with utilities for pointer
-/// operations like retrieving the upper bound index.
+/// Pointer utilities for VB.NET - provides safe pointer operations since VB.NET
+/// lacks native support for unsafe code and pointer arithmetic.
 /// </summary>
+/// <remarks>
+/// This module enables VB.NET developers to work with pointers safely, providing
+/// alternatives to C#'s unsafe code blocks and pointer operations that VB.NET doesn't support.
+/// </remarks>
 public static class Pointer
 {
     /// <summary>
     /// Creates a typed pointer from an existing array by internally pinning it to prevent
     /// garbage collector movement. Provides a fluent alternative to the constructor.
+    /// VB.NET lacks direct pointer creation capabilities.
     /// </summary>
     /// <param name="array">The array to create a pointer from. Must not be null.</param>
     /// <returns>A new <see cref="Pointer{T}"/> instance pointing to the pinned array.</returns>
@@ -16,6 +21,7 @@ public static class Pointer
 
     /// <summary>
     /// Gets the upper bound index of the pointer, which is one less than the total number of elements.
+    /// Provides VB.NET-style UBound functionality for pointer-based arrays.
     /// </summary>
     /// <param name="ptr">The pointer to get the upper bound for.</param>
     /// <returns>The upper bound index of the pointer.</returns>
@@ -24,6 +30,7 @@ public static class Pointer
 
 /// <summary>
 /// Pointer class to manage unmanaged memory pointers, providing safe access to unmanaged memory.
+/// VB.NET lacks native support for unsafe code and pointer operations.
 /// </summary>
 /// <typeparam name="T">The unmanaged type of elements in the pointer.</typeparam>
 public unsafe class Pointer<T> : IDisposable where T : unmanaged
@@ -32,8 +39,11 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     private int _length; // Number of elements
     private bool _isDisposed = false; // To detect redundant calls
 
+    internal T* RawPointer => _ptr;
+
     /// <summary>
     /// Creates a pointer from an existing array (internally pins the array to prevent GC movement).
+    /// VB.NET cannot perform this operation natively.
     /// </summary>
     public Pointer(T[] array)
     {
@@ -79,18 +89,19 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
 
     /// <summary>
     /// Accesses elements via index (similar to pointer offset).
+    /// Provides safe array-like access to pointer-based memory.
     /// </summary>
     public T this[int index]
     {
         get
         {
-            ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+            ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
             if (index < 0 || index >= _length) throw new IndexOutOfRangeException();
             return *(_ptr + index); // Pointer offset access
         }
         set
         {
-            ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+            ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
             if (index < 0 || index >= _length) throw new IndexOutOfRangeException();
             *(_ptr + index) = value; // Pointer offset assignment
         }
@@ -108,7 +119,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <returns>A new pointer at the specified offset.</returns>
     public Pointer<T> Offset(int offset)
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
         if (offset < 0 || offset >= _length) throw new ArgumentOutOfRangeException(nameof(offset));
         return new Pointer<T>(_ptr + offset, _length - offset);
     }
@@ -120,7 +131,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <param name="count">The number of elements to copy. If 0, copies all elements.</param>
     public void CopyTo(Pointer<T> destination, int count = 0)
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
         ArgumentNullException.ThrowIfNull(destination);
 
         int elementsToCopy = count == 0 ? _length : count;
@@ -139,7 +150,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <param name="count">The number of elements to copy. If 0, copies all elements.</param>
     public void CopyTo(T[] destination, int count = 0)
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
         ArgumentNullException.ThrowIfNull(destination);
 
         int elementsToCopy = count == 0 ? _length : count;
@@ -161,7 +172,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <param name="count">The number of elements to copy. If 0, copies all elements.</param>
     public void CopyFrom(T[] source, int count = 0)
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
         ArgumentNullException.ThrowIfNull(source);
 
         int elementsToCopy = count == 0 ? source.Length : count;
@@ -182,7 +193,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <param name="value">The value to fill with.</param>
     public void Fill(T value)
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
 
         for (int i = 0; i < _length; i++)
         {
@@ -196,7 +207,7 @@ public unsafe class Pointer<T> : IDisposable where T : unmanaged
     /// <returns>An array containing all elements in the pointer.</returns>
     public T[] ToArray()
     {
-        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<T>));
+        ObjectDisposedException.ThrowIf(_isDisposed, nameof(Pointer<>));
 
         T[] array = new T[_length];
         CopyTo(array);
