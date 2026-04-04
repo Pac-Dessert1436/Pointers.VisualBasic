@@ -1,5 +1,7 @@
 # `Pointers.VisualBasic` - A VB.NET Library for Memory-Safe Pointer Operations
 
+> **Important Note**: Main functionality of this project is now migrated to [PointersAndWorkaroundsVB](https://github.com/Pac-Dessert1436/PointersAndWorkaroundsVB) - *__this GitHub repository might be deprecated later on__*.
+
 ![](screenshot.png)
 
 ## Description
